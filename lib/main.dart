@@ -1,5 +1,37 @@
 import 'package:flutter/material.dart';
 
+void main() {
+  runApp(const MyApp());
+}
+
+// ====================
+// APP ROOT
+// ====================
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.deepPurple,
+        ),
+        useMaterial3: true,
+      ),
+
+      home: const StudentTaskManager(),
+    );
+  }
+}
+
+// ====================
+// TASK MODEL
+// ====================
+
 class Task {
   String title;
   String subject;
@@ -18,19 +50,26 @@ class Task {
   });
 }
 
-void main() {
-  runApp(const StudentTaskManager());
-}
+// ====================
+// STUDENT TASK MANAGER
+// ====================
 
 class StudentTaskManager extends StatefulWidget {
   const StudentTaskManager({super.key});
 
   @override
-  State<StudentTaskManager> createState() => _StudentTaskManagerState();
+  State<StudentTaskManager> createState() =>
+      _StudentTaskManagerState();
 }
 
-class _StudentTaskManagerState extends State<StudentTaskManager> {
-  List<Task> tasks = [
+class _StudentTaskManagerState
+    extends State<StudentTaskManager> {
+
+  // ====================
+  // DATA TASK
+  // ====================
+
+  final List<Task> tasks = [
     Task(
       title: 'Tugas Matematika',
       subject: 'Matematika',
@@ -38,6 +77,7 @@ class _StudentTaskManagerState extends State<StudentTaskManager> {
       note: 'Kerjakan halaman 20',
       color: Colors.red,
     ),
+
     Task(
       title: 'Membuat UI Flutter',
       subject: 'PPLG',
@@ -45,6 +85,7 @@ class _StudentTaskManagerState extends State<StudentTaskManager> {
       note: 'Buat halaman dashboard',
       color: Colors.blue,
     ),
+
     Task(
       title: 'Belajar Bahasa Jawa',
       subject: 'Bahasa Jawa',
@@ -54,11 +95,20 @@ class _StudentTaskManagerState extends State<StudentTaskManager> {
     ),
   ];
 
+  // ====================
+  // CHECK TASK
+  // ====================
+
   void toggleTask(int index) {
     setState(() {
-      tasks[index].isDone = !tasks[index].isDone;
+      tasks[index].isDone =
+          !tasks[index].isDone;
     });
   }
+
+  // ====================
+  // DELETE TASK
+  // ====================
 
   void deleteTask(int index) {
     setState(() {
@@ -66,213 +116,348 @@ class _StudentTaskManagerState extends State<StudentTaskManager> {
     });
   }
 
-  void changeColor(int index, Color color) {
+  // ====================
+  // CHANGE COLOR
+  // ====================
+
+  void changeColor(
+    int index,
+    Color color,
+  ) {
     setState(() {
       tasks[index].color = color;
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.deepPurple,
-        ),
-        useMaterial3: true,
-      ),
-      home: Scaffold(
-        backgroundColor: const Color(0xFFF5F5F7),
+  // ====================
+  // ADD TASK
+  // ====================
 
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: Colors.deepPurple,
-          foregroundColor: Colors.white,
-          title: const Text(
-            'Student Task Manager',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          actions: [
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.notifications_outlined),
-            ),
-          ],
-        ),
+  void showAddTaskDialog() {
+    final titleController =
+        TextEditingController();
 
-        body: Padding(
-          padding: const EdgeInsets.all(16),
+    final subjectController =
+        TextEditingController();
 
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Tugas Kamu 📚',
+    final noteController =
+        TextEditingController();
+
+    DateTime selectedDate =
+        DateTime.now();
+
+    Color selectedColor =
+        Colors.blue;
+
+    showDialog(
+      context: context,
+
+      builder: (dialogContext) {
+        return StatefulBuilder(
+          builder: (
+            context,
+            setDialogState,
+          ) {
+            return AlertDialog(
+              title: const Text(
+                'Tambah Tugas',
                 style: TextStyle(
-                  fontSize: 26,
                   fontWeight: FontWeight.bold,
                 ),
               ),
 
-              const SizedBox(height: 4),
+              content:
+                  SingleChildScrollView(
+                child: Column(
+                  mainAxisSize:
+                      MainAxisSize.min,
 
-              Text(
-                '${tasks.length} tugas tersedia',
-                style: TextStyle(
-                  color: Colors.grey.shade600,
-                  fontSize: 14,
-                ),
-              ),
+                  children: [
 
-              const SizedBox(height: 20),
+                    // ====================
+                    // TASK NAME
+                    // ====================
 
-              Expanded(
-                child: tasks.isEmpty
-                    ? const Center(
-                        child: Text(
-                          'Belum ada tugas 🎉',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
+                    TextField(
+                      controller:
+                          titleController,
+
+                      decoration:
+                          const InputDecoration(
+                        labelText:
+                            'Nama tugas',
+
+                        hintText:
+                            'Contoh: Tugas Matematika',
+
+                        prefixIcon:
+                            Icon(
+                          Icons.task_alt,
+                        ),
+
+                        border:
+                            OutlineInputBorder(),
+                      ),
+                    ),
+
+                    const SizedBox(
+                      height: 12,
+                    ),
+
+                    // ====================
+                    // SUBJECT
+                    // ====================
+
+                    TextField(
+                      controller:
+                          subjectController,
+
+                      decoration:
+                          const InputDecoration(
+                        labelText:
+                            'Mata pelajaran',
+
+                        hintText:
+                            'Contoh: Matematika',
+
+                        prefixIcon:
+                            Icon(
+                          Icons.book_outlined,
+                        ),
+
+                        border:
+                            OutlineInputBorder(),
+                      ),
+                    ),
+
+                    const SizedBox(
+                      height: 12,
+                    ),
+
+                    // ====================
+                    // DEADLINE
+                    // ====================
+
+                    InkWell(
+                      onTap: () async {
+                        final pickedDate =
+                            await showDatePicker(
+                          context: context,
+
+                          initialDate:
+                              selectedDate,
+
+                          firstDate:
+                              DateTime.now(),
+
+                          lastDate:
+                              DateTime(2035),
+                        );
+
+                        if (pickedDate !=
+                            null) {
+                          setDialogState(() {
+                            selectedDate =
+                                pickedDate;
+                          });
+                        }
+                      },
+
+                      borderRadius:
+                          BorderRadius.circular(
+                        12,
+                      ),
+
+                      child: Container(
+                        width:
+                            double.infinity,
+
+                        padding:
+                            const EdgeInsets.all(
+                          14,
+                        ),
+
+                        decoration:
+                            BoxDecoration(
+                          border:
+                              Border.all(
+                            color: Colors
+                                .grey
+                                .shade400,
+                          ),
+
+                          borderRadius:
+                              BorderRadius
+                                  .circular(
+                            12,
                           ),
                         ),
-                      )
-                    : ListView.builder(
-                        itemCount: tasks.length,
-                        itemBuilder: (context, index) {
-                          final task = tasks[index];
 
-                          return TaskCard(
-                            task: task,
-                            onToggle: () => toggleTask(index),
-                            onDelete: () => deleteTask(index),
-                            onColorChanged: (color) {
-                              changeColor(index, color);
-                            },
-                          );
-                        },
-                      ),
-              ),
-            ],
-          ),
-        ),
+                        child: Row(
+                          children: [
 
-        floatingActionButton: FloatingActionButton.extended(
-          onPressed: () {
-            showAddTaskDialog();
-          },
-          backgroundColor: Colors.deepPurple,
-          foregroundColor: Colors.white,
-          icon: const Icon(Icons.add),
-          label: const Text('Tambah Tugas'),
-        ),
-      ),
-    );
-  }
+                            const Icon(
+                              Icons
+                                  .calendar_month,
 
-  void showAddTaskDialog() {
-    final titleController = TextEditingController();
-    final subjectController = TextEditingController();
-    final noteController = TextEditingController();
+                              color:
+                                  Colors.deepPurple,
+                            ),
 
-    Color selectedColor = Colors.blue;
+                            const SizedBox(
+                              width: 12,
+                            ),
 
-    showDialog(
-      context: context,
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setDialogState) {
-            return AlertDialog(
-              title: const Text('Tambah Tugas'),
+                            Column(
+                              crossAxisAlignment:
+                                  CrossAxisAlignment
+                                      .start,
 
-              content: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    TextField(
-                      controller: titleController,
-                      decoration: const InputDecoration(
-                        labelText: 'Nama tugas',
-                        prefixIcon: Icon(Icons.task_alt),
+                              children: [
+
+                                const Text(
+                                  'Deadline',
+
+                                  style:
+                                      TextStyle(
+                                    fontSize:
+                                        12,
+
+                                    color:
+                                        Colors.grey,
+                                  ),
+                                ),
+
+                                const SizedBox(
+                                  height: 3,
+                                ),
+
+                                Text(
+                                  '${selectedDate.day}/${selectedDate.month}/${selectedDate.year}',
+
+                                  style:
+                                      const TextStyle(
+                                    fontWeight:
+                                        FontWeight
+                                            .w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
 
-                    const SizedBox(height: 12),
+                    const SizedBox(
+                      height: 12,
+                    ),
+
+                    // ====================
+                    // NOTE
+                    // ====================
 
                     TextField(
-                      controller: subjectController,
-                      decoration: const InputDecoration(
-                        labelText: 'Mata pelajaran',
-                        prefixIcon: Icon(Icons.book_outlined),
+                      controller:
+                          noteController,
+
+                      maxLines: 3,
+
+                      decoration:
+                          const InputDecoration(
+                        labelText:
+                            'Catatan',
+
+                        hintText:
+                            'Tambahkan catatan...',
+
+                        prefixIcon:
+                            Icon(
+                          Icons.notes,
+                        ),
+
+                        border:
+                            OutlineInputBorder(),
                       ),
                     ),
 
-                    const SizedBox(height: 12),
-
-                    TextField(
-                      controller: noteController,
-                      decoration: const InputDecoration(
-                        labelText: 'Catatan',
-                        prefixIcon: Icon(Icons.notes),
-                      ),
+                    const SizedBox(
+                      height: 20,
                     ),
 
-                    const SizedBox(height: 20),
+                    // ====================
+                    // COLOR
+                    // ====================
 
                     const Align(
-                      alignment: Alignment.centerLeft,
+                      alignment:
+                          Alignment.centerLeft,
+
                       child: Text(
                         'Warna tugas',
+
                         style: TextStyle(
-                          fontWeight: FontWeight.bold,
+                          fontWeight:
+                              FontWeight.bold,
                         ),
                       ),
                     ),
 
-                    const SizedBox(height: 10),
+                    const SizedBox(
+                      height: 12,
+                    ),
 
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      mainAxisAlignment:
+                          MainAxisAlignment
+                              .spaceEvenly,
+
                       children: [
-                        colorButton(
+
+                        buildColorButton(
                           Colors.red,
                           selectedColor,
+
                           (color) {
                             setDialogState(() {
-                              selectedColor = color;
+                              selectedColor =
+                                  color;
                             });
                           },
                         ),
 
-                        colorButton(
+                        buildColorButton(
                           Colors.orange,
                           selectedColor,
+
                           (color) {
                             setDialogState(() {
-                              selectedColor = color;
+                              selectedColor =
+                                  color;
                             });
                           },
                         ),
 
-                        colorButton(
+                        buildColorButton(
                           Colors.green,
                           selectedColor,
+
                           (color) {
                             setDialogState(() {
-                              selectedColor = color;
+                              selectedColor =
+                                  color;
                             });
                           },
                         ),
 
-                        colorButton(
+                        buildColorButton(
                           Colors.blue,
                           selectedColor,
+
                           (color) {
                             setDialogState(() {
-                              selectedColor = color;
+                              selectedColor =
+                                  color;
                             });
                           },
                         ),
@@ -282,35 +467,88 @@ class _StudentTaskManagerState extends State<StudentTaskManager> {
                 ),
               ),
 
+              // ====================
+              // BUTTON
+              // ====================
+
               actions: [
+
                 TextButton(
                   onPressed: () {
-                    Navigator.pop(context);
+                    Navigator.pop(
+                      dialogContext,
+                    );
                   },
-                  child: const Text('Batal'),
+
+                  child:
+                      const Text('Batal'),
                 ),
 
-                ElevatedButton(
+                ElevatedButton.icon(
                   onPressed: () {
-                    if (titleController.text.trim().isEmpty) {
+
+                    // Nama tugas wajib
+                    if (titleController
+                        .text
+                        .trim()
+                        .isEmpty) {
+
+                      ScaffoldMessenger
+                          .of(this.context)
+                          .showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            'Nama tugas belum diisi!',
+                          ),
+                        ),
+                      );
+
                       return;
                     }
 
+                    // Tambahkan task
                     setState(() {
+
                       tasks.add(
                         Task(
-                          title: titleController.text,
-                          subject: subjectController.text,
-                          deadline: DateTime.now(),
-                          note: noteController.text,
-                          color: selectedColor,
+                          title:
+                              titleController
+                                  .text
+                                  .trim(),
+
+                          subject:
+                              subjectController
+                                  .text
+                                  .trim(),
+
+                          deadline:
+                              selectedDate,
+
+                          note:
+                              noteController
+                                  .text
+                                  .trim(),
+
+                          color:
+                              selectedColor,
                         ),
                       );
                     });
 
-                    Navigator.pop(context);
+                    Navigator.pop(
+                      dialogContext,
+                    );
                   },
-                  child: const Text('Tambah'),
+
+                  icon:
+                      const Icon(
+                    Icons.add,
+                  ),
+
+                  label:
+                      const Text(
+                    'Tambah',
+                  ),
                 ),
               ],
             );
@@ -320,173 +558,506 @@ class _StudentTaskManagerState extends State<StudentTaskManager> {
     );
   }
 
-  Widget colorButton(
+  // ====================
+  // COLOR BUTTON
+  // ====================
+
+  Widget buildColorButton(
     Color color,
     Color selectedColor,
     Function(Color) onSelected,
   ) {
-    final isSelected = selectedColor == color;
+    final bool isSelected =
+        selectedColor == color;
 
     return GestureDetector(
       onTap: () {
         onSelected(color);
       },
-      child: Container(
-        width: 42,
-        height: 42,
-        decoration: BoxDecoration(
+
+      child: AnimatedContainer(
+        duration:
+            const Duration(
+          milliseconds: 200,
+        ),
+
+        width:
+            isSelected ? 46 : 40,
+
+        height:
+            isSelected ? 46 : 40,
+
+        decoration:
+            BoxDecoration(
           color: color,
-          shape: BoxShape.circle,
-          border: Border.all(
-            color: isSelected ? Colors.black : Colors.transparent,
+
+          shape:
+              BoxShape.circle,
+
+          border:
+              Border.all(
+            color: isSelected
+                ? Colors.black
+                : Colors.transparent,
+
             width: 3,
           ),
         ),
+
         child: isSelected
             ? const Icon(
                 Icons.check,
-                color: Colors.white,
+                color:
+                    Colors.white,
               )
             : null,
       ),
     );
   }
+
+  // ====================
+  // BUILD
+  // ====================
+
+  @override
+  Widget build(
+    BuildContext context,
+  ) {
+    return Scaffold(
+      backgroundColor:
+          const Color(0xFFF5F5F7),
+
+      // ====================
+      // APP BAR
+      // ====================
+
+      appBar: AppBar(
+        backgroundColor:
+            Colors.deepPurple,
+
+        foregroundColor:
+            Colors.white,
+
+        elevation: 0,
+
+        title: const Text(
+          'Student Task Manager',
+
+          style: TextStyle(
+            fontWeight:
+                FontWeight.bold,
+          ),
+        ),
+
+        actions: [
+
+          IconButton(
+            onPressed: () {},
+
+            icon: const Icon(
+              Icons
+                  .notifications_outlined,
+            ),
+          ),
+        ],
+      ),
+
+      // ====================
+      // BODY
+      // ====================
+
+      body: Padding(
+        padding:
+            const EdgeInsets.all(
+          16,
+        ),
+
+        child: Column(
+          crossAxisAlignment:
+              CrossAxisAlignment.start,
+
+          children: [
+
+            const Text(
+              'Tugas Kamu 📚',
+
+              style: TextStyle(
+                fontSize: 26,
+                fontWeight:
+                    FontWeight.bold,
+              ),
+            ),
+
+            const SizedBox(
+              height: 4,
+            ),
+
+            Text(
+              '${tasks.length} tugas tersedia',
+
+              style: TextStyle(
+                color:
+                    Colors.grey.shade600,
+              ),
+            ),
+
+            const SizedBox(
+              height: 20,
+            ),
+
+            Expanded(
+              child: tasks.isEmpty
+                  ? const Center(
+                      child: Text(
+                        'Belum ada tugas 🎉',
+
+                        style:
+                            TextStyle(
+                          fontSize: 18,
+                          fontWeight:
+                              FontWeight.w500,
+                        ),
+                      ),
+                    )
+
+                  : ListView.builder(
+                      itemCount:
+                          tasks.length,
+
+                      itemBuilder:
+                          (context, index) {
+
+                        final task =
+                            tasks[index];
+
+                        return TaskCard(
+                          task: task,
+
+                          onToggle: () {
+                            toggleTask(
+                              index,
+                            );
+                          },
+
+                          onDelete: () {
+                            deleteTask(
+                              index,
+                            );
+                          },
+
+                          onColorChanged:
+                              (color) {
+                            changeColor(
+                              index,
+                              color,
+                            );
+                          },
+                        );
+                      },
+                    ),
+            ),
+          ],
+        ),
+      ),
+
+      // ====================
+      // ADD BUTTON
+      // ====================
+
+      floatingActionButton:
+          FloatingActionButton.extended(
+        onPressed:
+            showAddTaskDialog,
+
+        backgroundColor:
+            Colors.deepPurple,
+
+        foregroundColor:
+            Colors.white,
+
+        icon:
+            const Icon(Icons.add),
+
+        label: const Text(
+          'Tambah Tugas',
+
+          style: TextStyle(
+            fontWeight:
+                FontWeight.bold,
+          ),
+        ),
+      ),
+    );
+  }
 }
 
-class TaskCard extends StatelessWidget {
+// =====================================================
+// TASK CARD
+// =====================================================
+
+class TaskCard
+    extends StatelessWidget {
+
   final Task task;
+
   final VoidCallback onToggle;
+
   final VoidCallback onDelete;
-  final Function(Color) onColorChanged;
+
+  final Function(Color)
+      onColorChanged;
 
   const TaskCard({
     super.key,
+
     required this.task,
+
     required this.onToggle,
+
     required this.onDelete,
+
     required this.onColorChanged,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+    BuildContext context,
+  ) {
     return Dismissible(
-      key: ObjectKey(task),
+      key:
+          ObjectKey(task),
 
-      direction: DismissDirection.endToStart,
+      direction:
+          DismissDirection
+              .endToStart,
 
-      background: Container(
-        margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.only(right: 20),
-        alignment: Alignment.centerRight,
-        decoration: BoxDecoration(
-          color: Colors.red,
-          borderRadius: BorderRadius.circular(18),
+      // ====================
+      // DELETE BACKGROUND
+      // ====================
+
+      background:
+          Container(
+        margin:
+            const EdgeInsets.only(
+          bottom: 12,
         ),
+
+        padding:
+            const EdgeInsets.only(
+          right: 20,
+        ),
+
+        alignment:
+            Alignment.centerRight,
+
+        decoration:
+            BoxDecoration(
+          color: Colors.red,
+
+          borderRadius:
+              BorderRadius.circular(
+            18,
+          ),
+        ),
+
         child: const Icon(
           Icons.delete,
-          color: Colors.white,
+
+          color:
+              Colors.white,
         ),
       ),
 
-      onDismissed: (direction) {
+      onDismissed:
+          (direction) {
         onDelete();
       },
 
+      // ====================
+      // CARD
+      // ====================
+
       child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
+        margin:
+            const EdgeInsets.only(
+          bottom: 12,
+        ),
 
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(18),
+        decoration:
+            BoxDecoration(
+          color:
+              Colors.white,
 
-          border: Border(
-            left: BorderSide(
-              color: task.color,
+          borderRadius:
+              BorderRadius.circular(
+            18,
+          ),
+
+          border:
+              Border(
+            left:
+                BorderSide(
+              color:
+                  task.color,
+
               width: 7,
             ),
           ),
 
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
+              color: Colors.black
+                  .withOpacity(
+                0.05,
+              ),
+
+              blurRadius:
+                  10,
+
+              offset:
+                  const Offset(
+                0,
+                4,
+              ),
             ),
           ],
         ),
 
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding:
+              const EdgeInsets.all(
+            16,
+          ),
 
           child: Row(
             children: [
+
+              // ====================
+              // CHECKBOX
+              // ====================
+
               Checkbox(
-                value: task.isDone,
-                activeColor: task.color,
-                onChanged: (_) {
+                value:
+                    task.isDone,
+
+                activeColor:
+                    task.color,
+
+                onChanged:
+                    (_) {
                   onToggle();
                 },
               ),
 
-              const SizedBox(width: 8),
+              const SizedBox(
+                width: 8,
+              ),
+
+              // ====================
+              // INFO
+              // ====================
 
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child:
+                    Column(
+                  crossAxisAlignment:
+                      CrossAxisAlignment
+                          .start,
+
                   children: [
+
                     Text(
                       task.title,
-                      style: TextStyle(
-                        fontSize: 17,
-                        fontWeight: FontWeight.bold,
-                        decoration: task.isDone
-                            ? TextDecoration.lineThrough
-                            : null,
-                        color: task.isDone
-                            ? Colors.grey
-                            : Colors.black87,
+
+                      style:
+                          TextStyle(
+                        fontSize:
+                            17,
+
+                        fontWeight:
+                            FontWeight
+                                .bold,
+
+                        decoration:
+                            task.isDone
+                                ? TextDecoration
+                                    .lineThrough
+                                : null,
+
+                        color:
+                            task.isDone
+                                ? Colors.grey
+                                : Colors.black87,
                       ),
                     ),
 
-                    const SizedBox(height: 5),
+                    const SizedBox(
+                      height: 5,
+                    ),
 
                     Text(
                       task.subject,
-                      style: TextStyle(
-                        color: task.color,
-                        fontWeight: FontWeight.w600,
+
+                      style:
+                          TextStyle(
+                        color:
+                            task.color,
+
+                        fontWeight:
+                            FontWeight
+                                .w600,
                       ),
                     ),
 
-                    const SizedBox(height: 8),
+                    const SizedBox(
+                      height: 8,
+                    ),
 
                     Row(
                       children: [
+
                         const Icon(
-                          Icons.calendar_today_outlined,
+                          Icons
+                              .calendar_today_outlined,
+
                           size: 15,
-                          color: Colors.grey,
+
+                          color:
+                              Colors.grey,
                         ),
 
-                        const SizedBox(width: 5),
+                        const SizedBox(
+                          width: 5,
+                        ),
 
                         Text(
                           '${task.deadline.day}/${task.deadline.month}/${task.deadline.year}',
-                          style: const TextStyle(
-                            color: Colors.grey,
+
+                          style:
+                              const TextStyle(
+                            color:
+                                Colors.grey,
                           ),
                         ),
                       ],
                     ),
 
-                    if (task.note.isNotEmpty) ...[
-                      const SizedBox(height: 5),
+                    if (task.note
+                        .isNotEmpty) ...[
+                      const SizedBox(
+                        height: 5,
+                      ),
 
                       Text(
                         task.note,
-                        style: TextStyle(
-                          color: Colors.grey.shade600,
-                          fontSize: 13,
+
+                        style:
+                            TextStyle(
+                          color:
+                              Colors.grey.shade600,
+
+                          fontSize:
+                              13,
                         ),
                       ),
                     ],
@@ -494,30 +1065,65 @@ class TaskCard extends StatelessWidget {
                 ),
               ),
 
-              PopupMenuButton<Color>(
-                icon: const Icon(Icons.more_vert),
+              // ====================
+              // MENU COLOR
+              // ====================
 
-                onSelected: (color) {
-                  onColorChanged(color);
+              PopupMenuButton<Color>(
+                icon:
+                    const Icon(
+                  Icons.more_vert,
+                ),
+
+                onSelected:
+                    (color) {
+                  onColorChanged(
+                    color,
+                  );
                 },
 
-                itemBuilder: (context) {
-                  return [
-                    const PopupMenuItem(
-                      value: Colors.red,
-                      child: Text('🔴 Merah'),
+                itemBuilder:
+                    (context) {
+                  return const [
+
+                    PopupMenuItem(
+                      value:
+                          Colors.red,
+
+                      child:
+                          Text(
+                        '🔴 Merah',
+                      ),
                     ),
-                    const PopupMenuItem(
-                      value: Colors.orange,
-                      child: Text('🟠 Kuning'),
+
+                    PopupMenuItem(
+                      value:
+                          Colors.orange,
+
+                      child:
+                          Text(
+                        '🟠 Orange',
+                      ),
                     ),
-                    const PopupMenuItem(
-                      value: Colors.green,
-                      child: Text('🟢 Hijau'),
+
+                    PopupMenuItem(
+                      value:
+                          Colors.green,
+
+                      child:
+                          Text(
+                        '🟢 Hijau',
+                      ),
                     ),
-                    const PopupMenuItem(
-                      value: Colors.blue,
-                      child: Text('🔵 Biru'),
+
+                    PopupMenuItem(
+                      value:
+                          Colors.blue,
+
+                      child:
+                          Text(
+                        '🔵 Biru',
+                      ),
                     ),
                   ];
                 },
